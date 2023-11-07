@@ -1,6 +1,5 @@
 import psycopg2
 import config
-import random
 
 conn = psycopg2.connect(config.pg_sql_con_string)
 conn.autocommit = True
