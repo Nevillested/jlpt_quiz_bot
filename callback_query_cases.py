@@ -54,3 +54,7 @@ def main(MypyBot, call):
 
 
             break
+
+    if call.data == "back_main":
+        text_out, reply_markup_out = keyboards.main_menu()
+        MypyBot.send_message(call.message.chat.id, text_out, reply_markup = reply_markup_out)
