@@ -6,40 +6,11 @@ conn = psycopg2.connect(config.pg_sql_con_string)
 conn.autocommit = True
 cur = conn.cursor()
 
-def get_poll(jlpt_lvl):
-    additional_filter = None
-    if jlpt_lvl != '6':
-        additional_filter = " and jlpt_level = " + jlpt_lvl
-    cur_text = """select id,
-                         'Что это за кадзи ' || kanji || '?',
-                         rus_translate
-                    from jlpt_quiz_bot.kanji
-                   where 1 = 1 """ + additional_filter + """
-                   ORDER BY random()
-                   limit 4"""
-    cur.execute(cur_text)
-    rows = cur.fetchall()
-    true_row = random.choice(rows)
-    true_id = true_row[0]
-    question = true_row[1]
-    poll_options = []
-    correct_id = None
-    dict_of_kanji = {}
-    key = 0
-    for option in rows:
-        poll_options.append(option[2])
-        dict_of_kanji[key] = option[0]
-        key += 1
-    for key, value in dict_of_kanji.items():
-        if value == true_id:
-            correct_id = key
-            break
-
-    return poll_options, correct_id, question
-
+#процедура удаляет все данные из таблицы и наполняет ее заново на основе того количества вопросов и уровня JLPT, которое выбрал пользователь
 def gen_questions(chat_id, cnt_questions, jlpt_level):
     cur.execute(""" call jlpt_quiz_bot.gen_users_questions_data(""" + str(chat_id) + """, """ + str(cnt_questions) + """, """ + str(jlpt_level) + """); """)
 
+#получает данные для квиза, которые еще не были отправлены
 def get_question(chat_id):
     cur_text = """select question_txt,
                          answers,
@@ -55,6 +26,7 @@ def get_question(chat_id):
     rows = cur.fetchall()
     return rows
 
+#проставляет в таблице с вопросами для пользователя флаг о том, что вопрос отправлен, чтобы повторно его не отправить
 def update_question(chat_id, question_num):
     cur_text = """update jlpt_quiz_bot.users_questions
                      set sent_flg = 1

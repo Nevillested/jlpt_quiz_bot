@@ -13,6 +13,7 @@ def create_inline_kb(dict_of_buttons, cnt_object_in_row):
     reply_to.add(*row)
     return reply_to
 
+#выдает сообщение с главным меню и кнопками выбора уровня JLPT.
 def main_menu():
     text = 'Выбери уровень JLPT'
     cnt_object_in_row = 3
@@ -20,6 +21,7 @@ def main_menu():
     reply_to = create_inline_kb(dict_of_buttons, cnt_object_in_row)
     return text, reply_to
 
+#выдает сообщение с меню выбора количества вопросов в тесте
 def cnt_questions_menu(button_data):
     text = 'Сколько вопросов?'
     cnt_object_in_row = 2
@@ -27,9 +29,10 @@ def cnt_questions_menu(button_data):
     reply_to = create_inline_kb(dict_of_buttons, cnt_object_in_row)
     return text, reply_to
 
+#выдает меню с кнопоками продолжить тест или вернуться в предыдщуее меню
 def give_me_more(call_data):
     text = 'Вопрос отправлен'
     cnt_object_in_row = 1
-    dict_of_buttons = {"Еще" : "more/" + call_data, "В предыдущее меню" : (call_data.split('/'))[0]}
+    dict_of_buttons = {"Далее" : "next/" + call_data, "В предыдущее меню" : (call_data.split('/'))[0]}
     reply_to = create_inline_kb(dict_of_buttons, cnt_object_in_row)
     return text, reply_to
