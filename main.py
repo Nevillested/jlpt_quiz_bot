@@ -2,6 +2,7 @@ import telebot
 import config
 import keyboards
 import callback_query_cases
+import time
 
 MypyBot = telebot.TeleBot(config.telegram_token)
 

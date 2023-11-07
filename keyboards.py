@@ -36,3 +36,11 @@ def give_me_more(call_data):
     dict_of_buttons = {"Далее" : "next/" + call_data, "В предыдущее меню" : (call_data.split('/'))[0]}
     reply_to = create_inline_kb(dict_of_buttons, cnt_object_in_row)
     return text, reply_to
+
+#выдает сообщение о том, что вопросы закончились и кнопки вернуться в предыдущее меню или главное меню
+def questions_empty(call_data):
+    text = 'Вопросы закончились'
+    cnt_object_in_row = 1
+    dict_of_buttons = {"В главное меню" : "back_main", "В предыдущее меню" : (call_data.split('/'))[1]}
+    reply_to = create_inline_kb(dict_of_buttons, cnt_object_in_row)
+    return text, reply_to
