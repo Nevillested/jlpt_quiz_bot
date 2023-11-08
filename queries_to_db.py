@@ -6,8 +6,8 @@ conn.autocommit = True
 cur = conn.cursor()
 
 #процедура удаляет все данные из таблицы и наполняет ее заново на основе того количества вопросов и уровня JLPT, которое выбрал пользователь
-def gen_questions(chat_id, cnt_questions, jlpt_level):
-    cur.execute(""" call jlpt_quiz_bot.gen_users_questions_data(""" + str(chat_id) + """, """ + str(cnt_questions) + """, """ + str(jlpt_level) + """); """)
+def gen_questions(chat_id, jlpt_lvl, test_type, cnt_questions):
+    cur.execute(""" call jlpt_quiz_bot.gen_users_questions_data(""" + str(chat_id) + """, """ + str(jlpt_lvl) + """, """ + str(test_type) + """, """ + str(cnt_questions) + """); """)
 
 #получает данные для квиза, которые еще не были отправлены
 def get_question(chat_id):
