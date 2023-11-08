@@ -33,7 +33,9 @@ def test_type(button_data):
 def cnt_questions_menu(button_data):
     text = 'Сколько вопросов?'
     cnt_object_in_row = 2
-    dict_of_buttons = {"5" : button_data + "5/", "10" : button_data + "10/", "25" : button_data + "25/", "50" : button_data + "50/", "100" : button_data + "100/", "Все" : button_data + "-1/", "В предыдущее меню" : "back_main"}
+    index = button_data.rfind('/', 0, button_data.rfind('/')) +1
+    previous_menu = button_data[:index]
+    dict_of_buttons = {"5" : button_data + "5/", "10" : button_data + "10/", "25" : button_data + "25/", "50" : button_data + "50/", "100" : button_data + "100/", "Все" : button_data + "-1/", "В предыдущее меню" : previous_menu}
     reply_to = create_inline_kb(dict_of_buttons, cnt_object_in_row)
     return text, reply_to
 
