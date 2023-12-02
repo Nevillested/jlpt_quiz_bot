@@ -20,10 +20,17 @@ def start_message(message):
 @MypyBot.callback_query_handler(func=lambda call: True)
 def start_callback_query(call):
     print(f"{call.from_user.username} нажал кнопку {call.data}.\n")
-    #удаляем меню
-    MypyBot.delete_message(chat_id = call.message.chat.id, message_id = call.message.message_id)
-    #переходим в раскейсовку кнопок
-    callback_query_cases.main(MypyBot, call)
+    #пробуем удалить меню
+    try:
+        MypyBot.delete_message(chat_id = call.message.chat.id, message_id = call.message.message_id)
+        #переходим в раскейсовку кнопок
+        callback_query_cases.main(MypyBot, call)
+    except:
+        MypyBot.edit_message_text(chat_id = call.message.chat.id, message_id = call.message.message_id, text = 'Просрочено')
+        #получаем главное меню с выбором уровня JLPT
+        text_out, reply_markup_out = keyboards.main_menu()
+        #отправляем главное меню с выбором уровня JLPT
+        MypyBot.send_message(call.message.chat.id, text_out, reply_markup = reply_markup_out)
 
 #могут быть ошибки связи с сервером, поэтому бот будет перезапускаться каждый раз при ошибках
 def start_bot():
