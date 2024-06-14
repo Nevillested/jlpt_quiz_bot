@@ -1,0 +1,125 @@
+-- PROCEDURE: jlpt_quiz_bot.gen_users_questions_data(bigint, integer, integer, integer)
+
+-- DROP PROCEDURE IF EXISTS jlpt_quiz_bot.gen_users_questions_data(bigint, integer, integer, integer);
+
+CREATE OR REPLACE PROCEDURE jlpt_quiz_bot.gen_users_questions_data(
+	IN p_chat_id bigint,
+	IN p_jlpt_level integer,
+	IN p_test_type integer,
+	IN p_cnt_questions integer)
+LANGUAGE 'plpgsql'
+AS $BODY$
+declare
+l_true_value integer;
+rec          record;
+l_cnt_questions integer;
+begin
+ delete from jlpt_quiz_bot.users_questions where chat_id = p_chat_id;
+ 
+ --если параметр по кол-ву вопросов равен -1, это значит, что необходимо создать все вопросы, которые есть
+ if p_cnt_questions = -1 then
+   select count(*)
+     into l_cnt_questions
+     from jlpt_quiz_bot.kanji
+	where (p_jlpt_level = -1 or jlpt_level = p_jlpt_level);
+ else
+   l_cnt_questions := p_cnt_questions;
+ end if;
+ --сколько раз генерируем вопрос
+ for j in 1..l_cnt_questions loop
+    
+	--генерируем число, которое будет являться номер строки, по которой будет задан вопрос
+    SELECT floor(random() * 4) + 1
+      INTO l_true_value;
+    
+    if p_test_type = 1 then
+	
+      --генерируем сам вопрос-ответ
+      for rec in (select kanji,
+                         kunyomi,
+                         ROW_NUMBER() OVER (ORDER BY RANDOM ()) as rn,
+                         l_true_value as true_value
+                    from (select *
+                            from jlpt_quiz_bot.v_kanji
+                           where 1 = 1
+                             and (p_jlpt_level = -1 or jlpt_level = p_jlpt_level)
+                           ORDER BY random()
+                           limit 4
+                         ) as a
+                  ) loop
+  
+        
+        if rec.rn = rec.true_value then
+          insert into jlpt_quiz_bot.users_questions(chat_id, question_num, question_txt, answers, flg_true_answer)
+          values (p_chat_id, j, 'Какое японское чтение (кунъёми) у этого кандзи ' || rec.kanji || '?', rec.kunyomi, 1);
+        else
+          insert into jlpt_quiz_bot.users_questions(chat_id, question_num, question_txt, answers, flg_true_answer)
+          values (p_chat_id, j, null, rec.kunyomi, 0);
+        end if;
+        
+      end loop;
+	
+	elsif p_test_type = 2 then
+	
+      --генерируем сам вопрос-ответ
+      for rec in (select kanji,
+                         onyomi,
+                         ROW_NUMBER() OVER (ORDER BY RANDOM ()) as rn,
+                         l_true_value as true_value
+                    from (select *
+                            from jlpt_quiz_bot.v_kanji
+                           where 1 = 1
+                             and (p_jlpt_level = -1 or jlpt_level = p_jlpt_level)
+                           ORDER BY random()
+                           limit 4
+                         ) as a
+                  ) loop
+  
+        
+        if rec.rn = rec.true_value then
+          insert into jlpt_quiz_bot.users_questions(chat_id, question_num, question_txt, answers, flg_true_answer)
+          values (p_chat_id, j, 'Какое китайское чтение (онъёми) у этого кандзи ' || rec.kanji || '?', rec.onyomi, 1);
+        else
+          insert into jlpt_quiz_bot.users_questions(chat_id, question_num, question_txt, answers, flg_true_answer)
+          values (p_chat_id, j, null, rec.onyomi, 0);
+        end if;
+        
+      end loop;
+	
+	elsif p_test_type = 3 then
+	
+      --генерируем сам вопрос-ответ
+      for rec in (select kanji,
+                         translate,
+                         ROW_NUMBER() OVER (ORDER BY RANDOM ()) as rn,
+                         l_true_value as true_value
+                    from (select *
+                            from jlpt_quiz_bot.v_kanji
+                           where 1 = 1
+                             and (p_jlpt_level = -1 or jlpt_level = p_jlpt_level)
+                           ORDER BY random()
+                           limit 4
+                         ) as a
+                  ) loop
+  
+        
+        if rec.rn = rec.true_value then
+          insert into jlpt_quiz_bot.users_questions(chat_id, question_num, question_txt, answers, flg_true_answer)
+          values (p_chat_id, j, 'Что это за кандзи ' || rec.kanji || '?', rec.translate, 1);
+        else
+          insert into jlpt_quiz_bot.users_questions(chat_id, question_num, question_txt, answers, flg_true_answer)
+          values (p_chat_id, j, null, rec.translate, 0);
+        end if;
+        
+      end loop;
+    
+	end if;
+	
+ end loop;
+ 
+ 
+end;
+$BODY$;
+ALTER PROCEDURE jlpt_quiz_bot.gen_users_questions_data(bigint, integer, integer, integer)
+    OWNER TO postgres;
+

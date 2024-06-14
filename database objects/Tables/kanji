@@ -1,0 +1,19 @@
+-- Table: jlpt_quiz_bot.kanji
+
+-- DROP TABLE IF EXISTS jlpt_quiz_bot.kanji;
+
+CREATE TABLE IF NOT EXISTS jlpt_quiz_bot.kanji
+(
+    id integer NOT NULL DEFAULT nextval('jlpt_quiz_bot.kanji_id_seq'::regclass),
+    kanji text COLLATE pg_catalog."default",
+    rus_translate text COLLATE pg_catalog."default",
+    eng_translate text COLLATE pg_catalog."default",
+    onyomi text COLLATE pg_catalog."default",
+    kunyomi text COLLATE pg_catalog."default",
+    jlpt_level integer
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS jlpt_quiz_bot.kanji
+    OWNER to postgres;

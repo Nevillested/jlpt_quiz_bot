@@ -1,0 +1,18 @@
+-- Table: jlpt_quiz_bot.users_questions
+
+-- DROP TABLE IF EXISTS jlpt_quiz_bot.users_questions;
+
+CREATE TABLE IF NOT EXISTS jlpt_quiz_bot.users_questions
+(
+    chat_id bigint,
+    question_num integer,
+    question_txt text COLLATE pg_catalog."default",
+    answers text COLLATE pg_catalog."default",
+    flg_true_answer integer,
+    sent_flg integer DEFAULT 0
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS jlpt_quiz_bot.users_questions
+    OWNER to postgres;

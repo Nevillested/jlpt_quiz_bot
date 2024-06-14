@@ -1,0 +1,7 @@
+ SELECT kanji,
+    COALESCE(rus_translate, eng_translate) AS translate,
+    onyomi,
+    kunyomi,
+    jlpt_level
+   FROM jlpt_quiz_bot.kanji
+  WHERE jlpt_level IS NOT NULL AND COALESCE(rus_translate, eng_translate) IS NOT NULL;
